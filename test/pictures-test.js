@@ -42,4 +42,34 @@ test('POST /', async t => {
   t.deepEqual(response.body, image)
 })
 
-test.todo('POST /:id/like')
+test('POST /:id/like', async t => {
+  let image = fixtures.getImage()
+  let url = t.context.url
+
+  let options = {
+    method: 'POST',
+    uri: `${url}/${image.id}/like`,
+    json: true
+  }
+
+  let body = await request(options)
+  let imageNew = JSON.parse(JSON.stringify(image))
+  imageNew.liked = true
+  imageNew.likes = 1
+
+  t.deepEqual(body, imageNew)
+})
+
+test('GET /list', async t => {
+  let images = fixtures.getImages()
+  let url = t.context.url
+
+  let options = {
+    method: 'GET',
+    uri: `${url}/list`,
+    json: true
+  }
+
+  let body = await request(options)
+  t.deepEqual(body, images)
+})

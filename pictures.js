@@ -15,6 +15,13 @@ if (env === 'test') {
 
 const hash = HttpHash()
 
+hash.set('GET /list', async function list (req, res, params) {
+  await db.connect()
+  let images = await db.getImages()
+  await db.disconnect()
+  send(res, 200, images)
+})
+
 hash.set('GET /:id', async function getPicture (req, res, params) {
   let id = params.id
   await db.connect()
@@ -29,6 +36,14 @@ hash.set('POST /', async function postPicture (req, res, params) {
   let created = await db.saveImage(image)
   await db.disconnect()
   send(res, 201, created)
+})
+
+hash.set('POST /:id/like', async function likePicture (req, res, params) {
+  let id = params.id
+  await db.connect()
+  let image = await db.likeImage(id)
+  await db.disconnect()
+  send(res, 200, image)
 })
 
 export default async function main (req, res) {
